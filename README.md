@@ -1,7 +1,7 @@
 # XXQG_TiaoZhanDaTi_TiKu
 学习强国_挑战答题题库（2021年4月30日整理）。每月底更新一次题库，欢迎star  
 
-![][/Screenshot cn.xuexi.android.jpg ""]
+![](/Screenshot cn.xuexi.android.jpg "")
 
 1. 根据《中华人民共和国土壤污染防治法》，未达到土壤污染风险评估报告确定的风险管控、修复目标的建设用地地块，禁止开工建设任何与       无关的项目。  
       * 后期管理  
