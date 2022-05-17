@@ -8,10 +8,10 @@
 requestScreenCapture() // 请求截屏
 
 // 设置查找参数
-var query_mode = "Server" // "Server" or "Json"
+var query_mode = "Json" // "Server" or "Json"
 if (query_mode == "Server") {
     // 服务器答案查找模式
-    var host="http://120.79.152.77:1880/tiku/"
+    var host="http://mondayfirst.top/tiku/"
     var get_answer = get_answer_from_server
     var post_answer = post_answer_to_server
 }
