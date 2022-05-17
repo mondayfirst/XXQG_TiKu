@@ -1,6 +1,6 @@
 /*
-    @author: Mondayfirst
-    @github: https://github.com/Mondayfirst/XXQG_TiKu
+    @author: mondayfirst
+    @github: https://github.com/mondayfirst/XXQG_TiKu
     @description: 本脚本可在Auto.js上执行。
 */
 
