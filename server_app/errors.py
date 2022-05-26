@@ -26,7 +26,7 @@ def errors(e: CustomException):
 
 
 def check_question(recept_question):
-    if not recept_question:
+    if not recept_question or ():
         abort(error_question_null())
     if len(recept_question) > 4000:
         abort(error_question_lenth())
@@ -34,6 +34,8 @@ def check_question(recept_question):
         abort(error_question_format())
     if len(recept_question.split("|")) <= 2:
         abort(error_question_answer_num())
+    if len(recept_question.split("|")[0]) < 1:
+        abort(error_question_null())
 
 
 def check_answer(send_answer):
