@@ -74,14 +74,31 @@ while (true) {
         a_uis[true_answer_index].parent().click()
     }
     sleep(2000)
-    if (text("结束本局").exists()) {
+    jump_tips_50TrueQuestions()
+    jump_tips_ErrorAnswer()
+    jump_warns_AccessException()
+}
+// =====================操作函数====================
+function jump_tips_ErrorAnswer() {
+    if (text("结束本局").exists() && !(text("continue.2d7587d1").exists())) {
         toast("等待8秒")
         sleep(8000)
         text("结束本局").findOne().click()
         text("再来一局").findOne().click()
     }
 }
-
+function jump_tips_50TrueQuestions() {
+    if (text("结束本局").exists() && text("continue.2d7587d1").exists()) {
+        text("继续").findOne(3000).click()
+        sleep(1000)
+    }
+}
+function jump_warns_AccessException() {
+    if (text("访问异常").exists()) {
+        var w = idContains("nc_1_n1t").findOne(5000).bounds()
+        swipe(w.centerX(), w.centerY(), device.width-w.centerX(), w.centerY(), 1000)
+    }
+}
 // =====================基础函数====================
 function get_root_node(root_node_classname) {
     // 获取框架的根节点，假设根节点类名为FrameLayout
@@ -183,7 +200,7 @@ function get_answer_from_server(question, answers) {
     // 从服务器获取正确答案，本地检索正确答案的索引并输出
     var true_answer_index = -1
     var key = join_question_with_answer(question, answers)
-    res = http.post(host + "query", {"q": key})
+    res = http.post(host + "query", { "q": key })
     if (res.statusCode == 200) {
         true_ans = res.body.string()
         for (var i = 0; i < answers.length; i++) {
