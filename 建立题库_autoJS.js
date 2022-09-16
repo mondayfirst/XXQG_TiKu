@@ -196,7 +196,7 @@ function handling_access_exceptions() {
                 continue;
             }
             // 执行脚本只需通过一次验证即可，防止占用资源
-            break;
+            // break;
         }
     });
     return thread_handling_access_exceptions;
