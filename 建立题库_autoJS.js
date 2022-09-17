@@ -135,7 +135,7 @@ function click_answer_radio_button(answer_uis, question, answers, idx, isMustPos
     sleep(200)
     if (text(imagetext_true).exists()) {
         // 点击正确，视参数来更新答案
-        var true_ans = answers[0]
+        var true_ans = answers[idx]
         if (isMustPost) {
             post_answer(question, answers, true_ans)
         }
