@@ -77,11 +77,11 @@ while (true) {
         // 点击答案
         var true_answer_index = get_answer(question, answers)
         if (true_answer_index >= 0) {
-            click_answer_radio_button(a_uis, question, answers, true_answer_index, false);
+            click_answer_radio_button(a_uis, question, answers, true_answer_index, false, obj_node);
         }
         else {
             // 如果没有查找到答案，就随机一个选项来点击，如果是非隐私模式，截屏查找正确答案，否则选项正确才更新答案
-            click_answer_radio_button(a_uis, question, answers, random(0, a_uis.length-1), true);
+            click_answer_radio_button(a_uis, question, answers, random(0, a_uis.length-1), true, obj_node);
         }
     }
     sleep(2000)
@@ -130,7 +130,7 @@ function swipe_to_view_the_last_answer(answer_uis) {
         }
     }
 }
-function click_answer_radio_button(answer_uis, question, answers, idx, isMustPost) {
+function click_answer_radio_button(answer_uis, question, answers, idx, isMustPost, obj_node) {
     answer_uis[idx].parent().click();
     sleep(200)
     if (text(imagetext_true).exists()) {
@@ -144,7 +144,7 @@ function click_answer_radio_button(answer_uis, question, answers, idx, isMustPos
         // 点击错误，如果是非隐私安全模式，立刻截图更新答案
         if (!isPrivateMode) {
             sleep(500)
-            var true_ans = find_true_answer_from_img(answer_uis)
+            var true_ans = find_true_answer_from_img(answer_uis, obj_node)
             post_answer(question, answers, true_ans)
         }
     }
@@ -289,10 +289,19 @@ function get_ui_answsers_from_obj_node(obj_node) {
     return a_uis
 }
 
-function find_true_answer_from_img(Nodes) {
+function find_true_answer_from_img(Nodes, obj_node) {
+    // 圈定找色范围
+    var Nodes_node_x = obj_node.child(1).bounds().left,
+        Nodes_node_y = obj_node.child(1).bounds().top,
+        Nodes_node_w = obj_node.child(1).bounds().right - Nodes_node_x,
+        Nodes_node_h = obj_node.child(1).bounds().bottom - Nodes_node_y;
     // 截图并从图片中根据答案的颜色寻找正确的答案选项，输出答案的文本
     var img = images.captureScreen();
-    var point = images.findColor(img, "#3dbf75")
+    var point = images.findColor(img, '#3dbf75', {
+        // 目的是防止找到倒计时的绿色进度条
+            region: [Nodes_node_x, Nodes_node_y, Nodes_node_w, Nodes_node_h],
+            threshold: 4
+        });
     if (point == null) {
         toastLog("Error:未找到正确答案！截屏失效(手动更改隐私模式参数)或颜色错误")
         throw "Error:未找到正确答案！截屏失效(手动更改隐私模式参数)或颜色错误"
