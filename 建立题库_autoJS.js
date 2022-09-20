@@ -12,11 +12,12 @@ var tk_path = "题库_排序版.json" // 本地题库路径
 var imagetext_true = "wuHxrFx3diBjHfgf52v8MvsAjGQAAAAAElFTkSuQmCC" // 答题正确时Image控件文本
 var imagetext_false = "v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvwRDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC" // 答题错误时Image控件文本
 var privateModeStartVersion = "2.33.999"
+var cycle_wait_time = 200 // 单位是毫秒
 // ================================================
 // =====================主程序运行====================
 // ================================================
 // 判断是否是隐私模式版本，新版本为隐私模式不可截屏，2.33版本可截屏
-var isPrivateMode = version1GreaterVersion2(getVersion("cn.xuexi.android"), privateModeStartVersion) 
+var isPrivateMode = version1GreaterVersion2(getVersion("cn.xuexi.android"), privateModeStartVersion)
 // 其它全局变量定义
 var globalLastdate = new Date().getTime();
 var globalIsObjFrame = false
@@ -81,10 +82,10 @@ while (true) {
         }
         else {
             // 如果没有查找到答案，就随机一个选项来点击，如果是非隐私模式，截屏查找正确答案，否则选项正确才更新答案
-            click_answer_radio_button(a_uis, question, answers, random(0, a_uis.length-1), true, obj_node);
+            click_answer_radio_button(a_uis, question, answers, random(0, a_uis.length - 1), true, obj_node);
         }
     }
-    sleep(2000)
+    sleep(cycle_wait_time)
     // 处理答题失败和50题选项
     if (jump_tips_50TrueQuestions() || jump_tips_ErrorAnswer()) {
         globalLastdate = new Date().getTime();
@@ -256,7 +257,7 @@ function version1GreaterVersion2(version1, version2, equal) {
     let versionArr1 = version1.split('.');
     let versionArr2 = version2.split('.');
     let result = false;
-    for (var i=0; i<versionArr1.length; i++) {
+    for (var i = 0; i < versionArr1.length; i++) {
         if (versionArr1[i] > versionArr2[i]) {
             result = true;
             break;
@@ -299,9 +300,9 @@ function find_true_answer_from_img(Nodes, obj_node) {
     var img = images.captureScreen();
     var point = images.findColor(img, '#3dbf75', {
         // 目的是防止找到倒计时的绿色进度条
-            region: [Nodes_node_x, Nodes_node_y, Nodes_node_w, Nodes_node_h],
-            threshold: 4
-        });
+        region: [Nodes_node_x, Nodes_node_y, Nodes_node_w, Nodes_node_h],
+        threshold: 4
+    });
     if (point == null) {
         toastLog("Error:未找到正确答案！截屏失效(手动更改隐私模式参数)或颜色错误")
         throw "Error:未找到正确答案！截屏失效(手动更改隐私模式参数)或颜色错误"
