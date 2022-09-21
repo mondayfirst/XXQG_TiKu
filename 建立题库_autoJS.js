@@ -12,7 +12,6 @@ var tk_path = "题库_排序版.json" // 本地题库路径
 var imagetext_true = "wuHxrFx3diBjHfgf52v8MvsAjGQAAAAAElFTkSuQmCC" // 答题正确时Image控件文本
 var imagetext_false = "v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvwRDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC" // 答题错误时Image控件文本
 var privateModeStartVersion = "2.33.999"
-var cycle_wait_time = 200 // 单位是毫秒
 // ================================================
 // =====================主程序运行====================
 // ================================================
@@ -85,7 +84,7 @@ while (true) {
             click_answer_radio_button(a_uis, question, answers, random(0, a_uis.length - 1), true, obj_node);
         }
     }
-    sleep(cycle_wait_time)
+    sleep(200)
     // 处理答题失败和50题选项
     if (jump_tips_50TrueQuestions() || jump_tips_ErrorAnswer()) {
         globalLastdate = new Date().getTime();
@@ -98,8 +97,8 @@ while (true) {
 function jump_tips_ErrorAnswer() {
     if (text("结束本局").exists() && !(text("continue.2d7587d1").exists())) {
         var nowdate = new Date().getTime();
-        if (globalIsObjFrame && (nowdate - globalLastdate < 10000)) {
-            sleep(random_time(10000 - nowdate + globalLastdate))
+        if (globalIsObjFrame && (nowdate - globalLastdate < 11000)) {
+            sleep(random_time(11000 - nowdate + globalLastdate))
         }
         text("结束本局").findOne().click()
         text("再来一局").findOne().click()
@@ -121,10 +120,11 @@ function swipe_to_view_the_last_answer(answer_uis) {
         return null
     }
     for (var i = 0; i < 10; i++) {
-        flag = answer_uis[length - 1].bounds().bottom == answer_uis[length - 2].bounds().bottom
+        flag = answer_uis[length - 1].bounds().bottom == answer_uis[length - 1].bounds().top
         if (flag) {
             // 滑动参数，当题目与答案较长时，需要滑动屏幕让最后一个答案显露出来。
-            swipe(answer_uis[0].bounds().left, parseInt(device.height / 2), answer_uis[0].bounds().left, parseInt(device.height * 4 / 5), 1000)
+            swipe(answer_uis[0].bounds().left, parseInt(device.height / 2), answer_uis[0].bounds().left, parseInt(device.height * 4 / 5), 500)
+            sleep(random_time(0))
         }
         else {
             break
@@ -133,6 +133,8 @@ function swipe_to_view_the_last_answer(answer_uis) {
 }
 function click_answer_radio_button(answer_uis, question, answers, idx, isMustPost, obj_node) {
     answer_uis[idx].parent().click();
+    var ansb = obj_node.child(1).bounds()
+    var answers_region = [ansb.left, ansb.top, ansb.width(), ansb.height()]
     sleep(200)
     if (text(imagetext_true).exists()) {
         // 点击正确，视参数来更新答案
@@ -145,7 +147,7 @@ function click_answer_radio_button(answer_uis, question, answers, idx, isMustPos
         // 点击错误，如果是非隐私安全模式，立刻截图更新答案
         if (!isPrivateMode) {
             sleep(500)
-            var true_ans = find_true_answer_from_img(answer_uis, obj_node)
+            var true_ans = find_true_answer_from_img(answer_uis, answers_region)
             post_answer(question, answers, true_ans)
         }
     }
@@ -290,17 +292,12 @@ function get_ui_answsers_from_obj_node(obj_node) {
     return a_uis
 }
 
-function find_true_answer_from_img(Nodes, obj_node) {
-    // 圈定找色范围
-    var Nodes_node_x = obj_node.child(1).bounds().left,
-        Nodes_node_y = obj_node.child(1).bounds().top,
-        Nodes_node_w = obj_node.child(1).bounds().right - Nodes_node_x,
-        Nodes_node_h = obj_node.child(1).bounds().bottom - Nodes_node_y;
+function find_true_answer_from_img(Nodes, region) {
     // 截图并从图片中根据答案的颜色寻找正确的答案选项，输出答案的文本
     var img = images.captureScreen();
     var point = images.findColor(img, '#3dbf75', {
         // 目的是防止找到倒计时的绿色进度条
-        region: [Nodes_node_x, Nodes_node_y, Nodes_node_w, Nodes_node_h],
+        region: region,
         threshold: 4
     });
     if (point == null) {
