@@ -12,12 +12,14 @@ var tk_path = "题库_排序版.json" // 本地题库路径
 var imagetext_true = "wuHxrFx3diBjHfgf52v8MvsAjGQAAAAAElFTkSuQmCC" // 答题正确时Image控件文本
 var imagetext_false = "v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvwRDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC" // 答题错误时Image控件文本
 var privateModeStartVersion = "2.33.999"
+var cycle_wait_time = 100 // 单位是毫秒
 // ================================================
 // =====================主程序运行====================
 // ================================================
 // 判断是否是隐私模式版本，新版本为隐私模式不可截屏，2.33版本可截屏
 var isPrivateMode = version1GreaterVersion2(getVersion("cn.xuexi.android"), privateModeStartVersion)
 // 其它全局变量定义
+var globalAnswerRunning = false
 var globalLastdate = new Date().getTime();
 var globalIsObjFrame = false
 
@@ -62,6 +64,11 @@ while (true) {
             sleep(random_time(1000))
             continue
         }
+        // 记录开始时间
+        if (!globalAnswerRunning) {
+            globalLastdate = new Date().getTime();
+            globalAnswerRunning = true
+        }
         globalIsObjFrame = true
         // 获取目标控件和文本
         var q_ui = get_ui_question_from_obj_node(obj_node);
@@ -84,10 +91,9 @@ while (true) {
             click_answer_radio_button(a_uis, question, answers, random(0, a_uis.length - 1), true, obj_node);
         }
     }
-    sleep(200)
+    sleep(cycle_wait_time)
     // 处理答题失败和50题选项
     if (jump_tips_50TrueQuestions() || jump_tips_ErrorAnswer()) {
-        globalLastdate = new Date().getTime();
         sleep(2000)
     }
 }
@@ -97,8 +103,9 @@ while (true) {
 function jump_tips_ErrorAnswer() {
     if (text("结束本局").exists() && !(text("continue.2d7587d1").exists())) {
         var nowdate = new Date().getTime();
-        if (globalIsObjFrame && (nowdate - globalLastdate < 11000)) {
-            sleep(random_time(11000 - nowdate + globalLastdate))
+        if (globalIsObjFrame && (nowdate - globalLastdate < 10000)) {
+            sleep(random_time(10000 - nowdate + globalLastdate))
+            globalAnswerRunning = false
         }
         text("结束本局").findOne().click()
         text("再来一局").findOne().click()
