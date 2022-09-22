@@ -23,9 +23,9 @@ RUN apt-get -y install cron
 RUN apt-get -y install python3
 RUN apt-get -y install pip
 RUN apt-get -y install language-pack-en
+RUN apt-get -y install curl
 ENV LANG="zh_CN.utf8"
-RUN echo "\nservice ssh restart" >> /root/.profile
-RUN echo "\nservice cron restart\n" >> /root/.profile
+RUN echo "\n0 * * * * root curl http://127.0.0.1:1880/tiku/save" >> /etc/crontab
 RUN pip install gunicorn
 RUN pip install gevent
 RUN pip install flask
@@ -55,8 +55,7 @@ apt-get -y install python3
 apt-get -y install pip
 apt-get -y install git
 apt-get -y install language-pack-en
-apt-get -y install language-pack-zh
-
+apt-get -y install curl
 
 echo "\nservice ssh restart" >> /root/.profile
 echo "\nservice cron restart\n" >> /root/.profile
