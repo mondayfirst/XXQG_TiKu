@@ -116,6 +116,5 @@ ContainerName = xxqg_tiku_server
 ExternalPort = 1880
 ExternalPath = /root/XXQG_TiKu
 # Run
-docker run --name=${ContainerName} -p ${ExternalPort}:1880 -v ${ExternalPath}:/root/app/XXQG_TiKu -itd xxqgtiku:latest /bin/bash /root/app/XXQG_TiKu/scripts/run_docker.sh
-docker update --restart=always ${ContainerName}
+docker run --restart=always --name=${ContainerName} -p ${ExternalPort}:1880 -v ${ExternalPath}:/root/app/XXQG_TiKu -itd xxqgtiku:latest /bin/bash /root/app/XXQG_TiKu/scripts/run_docker.sh
 ```
