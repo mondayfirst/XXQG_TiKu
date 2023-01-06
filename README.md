@@ -20,6 +20,7 @@
 &emsp;&emsp;详情见`xxqg_tiku_client/建立题库_autoJS.js`代码文件，注释个人认为比较清楚。有问题提issue。  
 1. 服务器  
 &emsp;&emsp;服务器端代码已给出，并封装成库。程序使用flask框架编写，使用pytest进行测试，较为简单，诸位可依此自建服务器端题库。代码默认使用JSON方式查询。  
+&emsp;&emsp;已在Dockerhub上传[镜像](https://hub.docker.com/r/mondayfirst/xxqgtiku-server)，可自行构建服务
 1. 隐私模式  
 &emsp;&emsp;隐私安全模式下无法截屏，只能通过随机选项点击后观察答案是否正确的步骤来获取正确答案。  
 
@@ -30,6 +31,7 @@
 ###### 20230106  
 1. 修改服务器程序代码，改为SQL数据库
 2. 修改仓库代码结构，使其更加合理  
+3. 修改Dockerhub镜像文件，使其更易部署
 ###### 20221013  
 1. 添加js脚本，可从Autox.js(Autox.js为Auto.js的分支, 应当支持Auto.js)创建db数据库(PutinYpa)。  
 ###### 20220920  
