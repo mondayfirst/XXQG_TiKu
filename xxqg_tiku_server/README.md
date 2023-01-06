@@ -43,7 +43,7 @@ gunicorn wsgi:app --workers 4 -b 0.0.0.0:5000 --worker-class gevent
 import requests
 data = {"q": "扑救火灾最有利的阶段是        。|火灾初起阶段|火灾发展阶段|火灾猛烈燃烧阶段"}
 # 注意自己的端口设置，自行修改！！！！！
-url = "http://127.0.0.1:5000" 
+url = "http://127.0.0.1:5000/query" 
 response = requests.post(url, data)
 print(response.status_code, response.text)
 ```
