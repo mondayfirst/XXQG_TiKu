@@ -1,4 +1,0 @@
-flask
-gunicorn
-pytest
-gevent

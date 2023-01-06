@@ -1,6 +1,7 @@
 #!/bin/bash
-service cron restart
-service ssh restart
-cd /root/app/XXQG_TiKu
-nohup gunicorn wsgi:app -c gunicorn.conf.py > server.log 2>&1 &
+nohup gunicorn /var/xxqg/wsgi:app --workers 4 -b 0.0.0.0:5000 --worker-class gevent > /var/xxqg/server.log 2>&1 &
 tail -f /dev/null
+
+
+# ps -ef | grep wsgi:app | grep -v grep | awk '{print "kill -9 "$2}' | sh
+# nohup gunicorn wsgi:app --workers 4 -b 0.0.0.0:5000 --worker-class gevent > server.log 2>&1 &

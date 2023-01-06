@@ -1,3 +1,6 @@
 *.pyc
 .git
 *.log
+*.egg-info
+*测试*
+default.db

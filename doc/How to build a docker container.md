@@ -1,5 +1,4 @@
 # How to build a docker container to run this project in Linux
-[toc]
 ## 1. Build
 ### 1.1 By DockerFile
 #### Create a docker file
