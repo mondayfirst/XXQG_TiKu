@@ -1,7 +1,20 @@
+<p align="center">
+    <h2 align="center">学习强国——挑战答题题库</h2>
+    <p align="center">
+        <a href="https://github.com/mondayfirst/XXQG_TiKu/blob/main/LICENSE" target="blank">
+            <img src="https://img.shields.io/github/license/mondayfirst/XXQG_TiKu" alt="license"/>
+        </a>
+        <a href="https://hub.docker.com/r/mondayfirst/xxqgtiku-server" target="blank">
+            <img src="https://img.shields.io/badge/docker-xxqgtiku--server-blue" alt="docker"/>
+        </a>
+        <a href="https://github.com/mondayfirst/XXQG_TiKu/search?l=javascript" target="blank">
+            <img src="https://img.shields.io/github/languages/top/mondayfirst/XXQG_TiKu" alt="languages"/>
+        </a>
+    </p>
+</p>
 
 ---
-#### 学习强国_挑战答题题库
-##### ————从服务器每小时上传一次网络题库，欢迎star。
+##### 从服务器每小时上传一次网络题库，欢迎star。
 ###### &emsp;&emsp;请各位自取挑战答题部分代码。
 ###### &emsp;&emsp;对服务器端进行完善，以实现自动化上传github题库。
 ###### &emsp;&emsp;识别正确答案的代码已在脚本中，请以此尽量向服务器增加题目，可加快题库的更新速度。
@@ -29,8 +42,8 @@
 
 ##### 三、更新日志  
 ###### 20230106  
-1. 修改服务器程序代码，改为SQL数据库
-2. 修改仓库代码结构，使其更加合理  
+1. 修改服务器程序代码，服务器端存储方式改为SQL数据库
+2. 修改仓库代码结构，使架构更合理  
 3. 修改Dockerhub镜像文件，使其更易部署
 ###### 20221013  
 1. 添加js脚本，可从Autox.js(Autox.js为Auto.js的分支, 应当支持Auto.js)创建db数据库(PutinYpa)。  
