@@ -11,7 +11,7 @@ cd ..
 ```
 Dockerfile content shows as below:
 ```
-FROM python:3.9
+FROM python:3.9-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
