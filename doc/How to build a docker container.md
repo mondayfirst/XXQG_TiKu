@@ -48,7 +48,9 @@ export ExternalPort=10000   # 本地端口
 export ExternalPath=/root/xxqg # 本地环境xxqg_tiku.db所在的文件夹，没有同名文件则自动创建
 
 # Run
-docker run --restart=always --name=${ContainerName} -p ${ExternalPort}:5000 -v ${ExternalPath}:/etc/xxqg/db -itd mondayfirst/xxqgtiku-server:latest
+docker run --restart=always --name=${ContainerName} -p ${ExternalPort}:5000 \
+    -v ${ExternalPath}:/etc/xxqg/db -itd mondayfirst/xxqgtiku-server:latest \
+    gunicorn /etc/xxqg/wsgi:app --workers 4 -b 0.0.0.0:5000 --worker-class gevent
 
 # Test
 python3
@@ -57,4 +59,5 @@ python3
 >>> url = "http://127.0.0.1:10000/query" # 注意自己的端口设置，自行修改！！！！！
 >>> response = requests.post(url, data)
 >>> print(response.status_code, response.text)
+200 火灾初起阶段
 ```
