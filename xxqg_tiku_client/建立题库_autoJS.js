@@ -14,7 +14,8 @@ var imagetext_false = "v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4
 var privateModeStartVersion = "2.33.999"
 var cycle_wait_time = 100 // 单位是毫秒
 var start_wait_time = 10000 // 每轮答题最低时长，单位是毫秒
-http.__okhttp__.setTimeout(1000);
+http.__okhttp__.setTimeout(1000); // 设置超时时长为 1 秒
+
 // ================================================
 // =====================主程序运行====================
 // ================================================
@@ -340,14 +341,19 @@ function join_question_with_answer(question, answers) {
 function post_answer_to_server(question, answers, true_ans) {
     // 发送请求到服务器更新答案
     var key = join_question_with_answer(question, answers)
-    try {
-        res = http.post(host + "add", {
-            "q": key,
-            "a": true_ans,
-        })
-    } catch (err) {
-        console.log("服务器连接失败或超时，请检查网络主机地址或等待响应")
-        sleep(10000)
+    for (var i = 0; i < 3; i++) {
+        try {
+            res = http.post(host + "add", {
+                "q": key,
+                "a": true_ans,
+            })
+            if (res.statusCode == 200) {
+                break
+            }
+        } catch (err) {
+            console.log("服务器连接失败或超时，请检查网络主机地址或等待响应")
+            sleep(1000)
+        }
     }
     log(question + res.statusCode)
 }
@@ -356,24 +362,26 @@ function get_answer_from_server(question, answers) {
     // 从服务器获取正确答案，本地检索正确答案的索引并输出
     var true_answer_index = -1
     var key = join_question_with_answer(question, answers)
-    try {
-        res = http.post(host + "query", { "q": key })
-    } catch (err) {
-        console.log("服务器连接失败或超时，请检查网络主机地址或等待响应")
-        sleep(10000)
-    }
-    if (res.statusCode == 200) {
-        true_ans = res.body.string()
-        for (var i = 0; i < answers.length; i++) {
-            if (true_ans == answers[i]) {
-                true_answer_index = i
-                break
+    for (var i = 0; i < 3; i++) {
+        try {
+            res = http.post(host + "query", { "q": key })
+            if (res.statusCode == 200) {
+                true_ans = res.body.string()
+                for (var i = 0; i < answers.length; i++) {
+                    if (true_ans == answers[i]) {
+                        true_answer_index = i
+                        break
+                    }
+                }
             }
+            break
+        } catch (err) {
+            console.log("服务器连接失败或超时，请检查网络主机地址或等待响应")
+            sleep(1000)
         }
     }
     return true_answer_index
 }
-
 /////////////////通过本地json获取答案
 function post_answer_to_json(question, answers, true_ans) {
     // 发送题目到Json更新答案
