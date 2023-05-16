@@ -4,29 +4,10 @@
 #### Create a docker file
 ```
 mkdir temp_dockerfile
-vim temp_dockerfile/Dockerfile
 cd temp_dockerfile
 git clone https://github.com/mondayfirst/XXQG_TiKu.git
+cp XXQG_TiKu/doc/"How to build a docker container"/Dockerfile Dockerfile
 cd ..
-```
-Dockerfile content shows as below:
-```
-FROM python:3.9-slim
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Install
-COPY XXQG_TiKu/xxqg_tiku_server /etc/xxqg/xxqg_tiku_server
-RUN pip3 install /etc/xxqg/xxqg_tiku_server
-
-# Create Wsgi File
-RUN echo 'from xxqg_tiku_server import create_app\napp = create_app({"tkpath":"/etc/xxqg/db/xxqg_tiku.db"})' > /etc/xxqg/wsgi.py
-
-# Create Start File
-RUN echo '#!/bin/bash\ncd /etc/xxqg\nnohup gunicorn wsgi:app --workers 4 -b 0.0.0.0:5000 --worker-class gevent > /etc/xxqg/server.log 2>&1 &\ntail -f /dev/null' >> /root/.start.sh
-
-
-ENTRYPOINT ["/bin/bash", "/root/.start.sh"]
 ```
 #### Build image from dockerfile
 ```
