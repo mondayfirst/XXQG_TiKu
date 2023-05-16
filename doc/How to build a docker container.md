@@ -49,8 +49,10 @@ export ExternalPath=/root/xxqg # 本地环境xxqg_tiku.db所在的文件夹，�
 
 # Run
 docker run --restart=always --name=${ContainerName} -p ${ExternalPort}:5000 \
-    -v ${ExternalPath}:/etc/xxqg/db -itd mondayfirst/xxqgtiku-server:latest \
-    gunicorn /etc/xxqg/wsgi:app --workers 4 -b 0.0.0.0:5000 --worker-class gevent
+    -v ${ExternalPath}:/etc/xxqg/db \
+    -w /etc/xxqg \
+    -itd mondayfirst/xxqgtiku-server:latest \
+    gunicorn wsgi:app --workers 4 -b 0.0.0.0:5000 --worker-class gevent
 
 # Test
 python3
