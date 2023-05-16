@@ -13,6 +13,8 @@ var imagetext_true = "wuHxrFx3diBjHfgf52v8MvsAjGQAAAAAElFTkSuQmCC" // 答题正�
 var imagetext_false = "v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvwRDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC" // 答题错误时Image控件文本
 var privateModeStartVersion = "2.33.999"
 var cycle_wait_time = 100 // 单位是毫秒
+var start_wait_time = 10000 // 每轮答题最低时长，单位是毫秒
+http.__okhttp__.setTimeout(1000);
 // ================================================
 // =====================主程序运行====================
 // ================================================
@@ -103,8 +105,8 @@ while (true) {
 function jump_tips_ErrorAnswer() {
     if (text("结束本局").exists() && !(text("continue.2d7587d1").exists())) {
         var nowdate = new Date().getTime();
-        if (globalIsObjFrame && (nowdate - globalLastdate < 10000)) {
-            sleep(random_time(10000 - nowdate + globalLastdate))
+        if (globalIsObjFrame && (nowdate - globalLastdate < start_wait_time)) {
+            sleep(random_time(start_wait_time + (globalLastdate - nowdate)))
             globalAnswerRunning = false
         }
         text("结束本局").findOne().click()
