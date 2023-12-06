@@ -1,20 +1,20 @@
 /*
     @author: mondayfirst
     @github: https://github.com/mondayfirst/XXQG_TiKu
-    @description: 本脚本可在Auto.js上执行。
+    @description: 本脚本可在AutoX.js上执行。
 */
-
+// 关闭所有线程
+threads.shutDownAll()
 // =====================参数设置====================
-var query_mode = "Json"; // 服务器答案查找模式，二选一："Server" or "Json" 
 var 挑战答题索引 = "000001000000000000002010" // 挑战答题部分ui相对根节点的嵌套位置索引
-var host = "https://mondayfirst.top/tiku/" // 网络题库URL路径
-var tk_path = "题库_排序版.json" // 本地题库路径
-var imagetext_true = "wuHxrFx3diBjHfgf52v8MvsAjGQAAAAAElFTkSuQmCC" // 答题正确时Image控件文本
-var imagetext_false = "v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvwRDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC" // 答题错误时Image控件文本
-var privateModeStartVersion = "2.33.999"
-var cycle_wait_time = 100 // 单位是毫秒
-var start_wait_time = 10000 // 每轮答题最低时长，单位是毫秒
-http.__okhttp__.setTimeout(1000); // 设置超时时长为 1 秒
+var host = "http://192.168.3.2:5000" // 网络题库URL路径，请自行修改为服务器IP地址和端口
+var imagetext_true = "SGLxINmefgEhdVfQxDvcygAAAABJRU5ErkJggg==" // 答题正确时Image控件文本
+var imagetext_false = "LqFTlORbAU3kyEmgqiqE0FUU7iGyTs0AbJ0AEAbUJkGsQXyjcAAAAASUVORK5CYII=+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC" // 答题错误时Image控件文本
+var image_color_when_true = "#3dbf75" // 答题正确时Image控件颜色
+var privateModeStartVersion = "5.33.999"
+var cycle_wait_time = 200 // 单位是毫秒
+var start_wait_time = 10100 // 每轮答题最低时长，单位是毫秒
+http.__okhttp__.setTimeout(1000);
 
 // ================================================
 // =====================主程序运行====================
@@ -24,7 +24,6 @@ var isPrivateMode = version1GreaterVersion2(getVersion("cn.xuexi.android"), priv
 // 其它全局变量定义
 var globalAnswerRunning = false
 var globalLastdate = new Date().getTime();
-var globalIsObjFrame = false
 
 
 if (!isPrivateMode) {
@@ -34,32 +33,9 @@ if (!isPrivateMode) {
 var thread_handling_access_exceptions = handling_access_exceptions();
 var thread_handling_submit_exceptions = handling_submit_exceptions();
 
-// 设置查找参数
-if (query_mode == "Server") {
-    // 服务器答案查找模式
-    var get_answer = get_answer_from_server
-    var post_answer = post_answer_to_server
-}
-else if (query_mode == "Json") {
-    // 本地Json答案查找模式
-    if (files.isFile(tk_path))
-        var globalTiku = JSON.parse(json_str = files.read(tk_path))
-    else {
-        toastLog("没有目标题库文件，将写新文件输出")
-        var globalTiku = {}
-    }
-    var get_answer = get_answer_from_json
-    var post_answer = post_answer_to_json
-}
-else {
-    toastLog("未选择题目答案的查找模式!退出中...")
-    exit()
-}
-
 // 循环运行
 while (true) {
     // 获取根节点
-    globalIsObjFrame = false
     if (!className("android.widget.Image").depth(26).textMatches(/\S+/).exists()) {
         sleep(100)
         var obj_node = get_ui_obj_from_posstr(挑战答题索引)
@@ -72,7 +48,6 @@ while (true) {
             globalLastdate = new Date().getTime();
             globalAnswerRunning = true
         }
-        globalIsObjFrame = true
         // 获取目标控件和文本
         var q_ui = get_ui_question_from_obj_node(obj_node);
         var a_uis = get_ui_answsers_from_obj_node(obj_node);
@@ -85,9 +60,9 @@ while (true) {
         // 滑动窗口
         swipe_to_view_the_last_answer(a_uis); // 滑动窗口来显示最后一个答案
         // 点击答案
-        var true_answer_index = get_answer(question, answers)
+        var true_answer_index = get_answer_from_server(question, answers)
         if (true_answer_index >= 0) {
-            click_answer_radio_button(a_uis, question, answers, true_answer_index, false, obj_node);
+            click_answer_radio_button(a_uis, question, answers, true_answer_index, true, obj_node);
         }
         else {
             // 如果没有查找到答案，就随机一个选项来点击，如果是非隐私模式，截屏查找正确答案，否则选项正确才更新答案
@@ -97,27 +72,30 @@ while (true) {
     sleep(cycle_wait_time)
     // 处理答题失败和50题选项
     if (jump_tips_50TrueQuestions() || jump_tips_ErrorAnswer()) {
-        sleep(2000)
+        sleep(1000)
     }
 }
 // ================================================
 // =======================函数======================
 // =====================操作函数====================
 function jump_tips_ErrorAnswer() {
-    if (text("结束本局").exists() && !(text("continue.2d7587d1").exists())) {
+    if (text("结束本局").exists() && (text("立即复活").exists())) {
         var nowdate = new Date().getTime();
-        if (globalIsObjFrame && (nowdate - globalLastdate < start_wait_time)) {
+        console.log((nowdate - globalLastdate))
+        console.log(start_wait_time)
+        if ((nowdate - globalLastdate) < start_wait_time) {
+            toastLog("等待" + (start_wait_time + (globalLastdate - nowdate)) + "毫秒")
             sleep(random_time(start_wait_time + (globalLastdate - nowdate)))
-            globalAnswerRunning = false
         }
         text("结束本局").findOne().click()
         text("再来一局").findOne().click()
+        globalAnswerRunning = false
         return true;
     }
     return false;
 }
 function jump_tips_50TrueQuestions() {
-    if (text("结束本局").exists() && text("continue.2d7587d1").exists()) {
+    if (text("结束本局").exists() && text("继续").exists() && textContains("您已答对了50题").exists() && (textContains("稍作休息").exists())) {
         text("继续").findOne(3000).click()
         return true;
     }
@@ -148,17 +126,21 @@ function click_answer_radio_button(answer_uis, question, answers, idx, isMustPos
     sleep(200)
     if (text(imagetext_true).exists()) {
         // 点击正确，视参数来更新答案
-        var true_ans = answers[idx]
+        var select_ans = answers[idx]
         if (isMustPost) {
-            post_answer(question, answers, true_ans)
+            post_answer_to_server(question, answers, select_ans, true)
         }
     }
     else {
-        // 点击错误，如果是非隐私安全模式，立刻截图更新答案
+        // 点击错误
         if (!isPrivateMode) {
+            // 如果是非隐私安全模式，立刻截图更新本次答案，答案选择正确
             sleep(500)
-            var true_ans = find_true_answer_from_img(answer_uis, answers_region)
-            post_answer(question, answers, true_ans)
+            var select_ans = find_true_answer_from_img(answer_uis, answers_region)
+            post_answer_to_server(question, answers, select_ans, true)
+        } else {
+            // 如果是隐私安全模式，上传本次答案，答案选择错误
+            post_answer_to_server(question, answers, answers[idx], false)
         }
     }
 }
@@ -305,7 +287,7 @@ function get_ui_answsers_from_obj_node(obj_node) {
 function find_true_answer_from_img(Nodes, region) {
     // 截图并从图片中根据答案的颜色寻找正确的答案选项，输出答案的文本
     var img = images.captureScreen();
-    var point = images.findColor(img, '#3dbf75', {
+    var point = images.findColor(img, image_color_when_true, {
         // 目的是防止找到倒计时的绿色进度条
         region: region,
         threshold: 4
@@ -338,15 +320,22 @@ function join_question_with_answer(question, answers) {
 }
 // =====================题库函数====================
 /////////////////通过服务器获取答案
-function post_answer_to_server(question, answers, true_ans) {
+function post_answer_to_server(question, answers, select_ans, isTrue) {
     // 发送请求到服务器更新答案
     var key = join_question_with_answer(question, answers)
     for (var i = 0; i < 3; i++) {
         try {
-            res = http.post(host + "add", {
-                "q": key,
-                "a": true_ans,
-            })
+            if (isTrue) {
+                res = http.post(host + "/submit/true", {
+                    "question": key,
+                    "answer": select_ans
+                })
+            } else {
+                res = http.post(host + "/submit/false", {
+                    "question": key,
+                    "answer": select_ans
+                })
+            }
             if (res.statusCode == 200) {
                 break
             }
@@ -364,7 +353,7 @@ function get_answer_from_server(question, answers) {
     var key = join_question_with_answer(question, answers)
     for (var i = 0; i < 3; i++) {
         try {
-            res = http.post(host + "query", { "q": key })
+            res = http.post(host + "/query", { "question": key })
             if (res.statusCode == 200) {
                 true_ans = res.body.string()
                 for (var i = 0; i < answers.length; i++) {
@@ -381,27 +370,4 @@ function get_answer_from_server(question, answers) {
         }
     }
     return true_answer_index
-}
-/////////////////通过本地json获取答案
-function post_answer_to_json(question, answers, true_ans) {
-    // 发送题目到Json更新答案
-    var key = join_question_with_answer(question, answers)
-    globalTiku[key] = true_ans
-    files.write(tk_path, JSON.stringify(globalTiku))
-}
-
-function get_answer_from_json(question, answers) {
-    // 从Json获取正确答案，本地检索正确答案的索引并输出
-    if (!globalTiku)
-        toastLog("ERROR:没有题库文件")
-    var true_index = -1
-    var key = join_question_with_answer(question, answers)
-    var true_ans = globalTiku[key]
-    for (var i = 0; i < answers.length; i++) {
-        if (true_ans == answers[i]) {
-            true_index = i
-            break
-        }
-    }
-    return true_index
 }

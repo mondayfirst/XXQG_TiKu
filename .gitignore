@@ -4,3 +4,4 @@
 *.egg-info
 *测试*
 default.db
+题库_错题缓存.json
